@@ -1,9 +1,13 @@
 package com.ubiquitous.perpetualcalendar
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.ListView
 import android.widget.NumberPicker
 import android.widget.SimpleAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -46,34 +50,35 @@ fun calculateAdvent(year: Int): LocalDate {
     return tmpDate
 }
 
-fun setHolidayDates(mainActivity: MainActivity, holidayListView: ListView, year: Int) {
-    //setting names and dates of holidays
-    //based on https://www.geeksforgeeks.org/simpleadapter-in-android-with-example/
-    val holidayNames = arrayOf("Ash Wednesday", "Easter Sunday", "Corpus Christi", "First Sunday of Advent")
-    val easterDate = calculateEaster(year)
-    val holidayDates = arrayOf(
-            easterDate.minusDays(46),
-            easterDate,
-            easterDate.plusDays(60),
-            calculateAdvent(year))
-    val holidays = ArrayList<HashMap<String,String>>()
-    for(i in holidayNames.indices){
-        val item = HashMap<String,String>()
-        item["name"] = holidayNames[i]
-        item["date"] = holidayDates[i].format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
-        holidays.add(item)
-    }
-
-    val adapter = SimpleAdapter(mainActivity, holidays, android.R.layout.simple_list_item_2,
-            arrayOf("name", "date"), intArrayOf(android.R.id.text1, android.R.id.text2))
-    holidayListView.adapter = adapter
-
-    return
-}
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var holidayListView: ListView
+    private lateinit var adapter: SimpleAdapter
+
+    private fun setHolidayDates(mainActivity: MainActivity, holidayListView: ListView, year: Int) {
+        //setting names and dates of holidays
+        //based on https://www.geeksforgeeks.org/simpleadapter-in-android-with-example/
+        val holidayNames = arrayOf("Ash Wednesday", "Easter Sunday", "Corpus Christi", "First Sunday of Advent")
+        val easterDate = calculateEaster(year)
+        val holidayDates = arrayOf(
+                easterDate.minusDays(46),
+                easterDate,
+                easterDate.plusDays(60),
+                calculateAdvent(year))
+        val holidays = ArrayList<HashMap<String,String>>()
+        for(i in holidayNames.indices){
+            val item = HashMap<String,String>()
+            item["name"] = holidayNames[i]
+            item["date"] = holidayDates[i].format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+            holidays.add(item)
+        }
+
+        adapter = SimpleAdapter(mainActivity, holidays, android.R.layout.simple_list_item_2,
+                arrayOf("name", "date"), intArrayOf(android.R.id.text1, android.R.id.text2))
+        holidayListView.adapter = adapter
+
+        return
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,6 +99,16 @@ class MainActivity : AppCompatActivity() {
 
             setHolidayDates(this, holidayListView, newVal)
             true
+        }
+
+        holidayListView.setOnItemClickListener { parent, view, position, id ->
+            val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+            val element = adapter.getItem(position) as HashMap<String, String>
+            val clip = ClipData.newPlainText(element["name"], element["date"])
+            clipboard.setPrimaryClip(clip)
+
+            val toast = Toast.makeText(applicationContext, "Copied to clipboard", Toast.LENGTH_SHORT)
+            toast.show()
         }
 
     }
