@@ -6,3 +6,5 @@ Simple Android app for calculating holiday dates. Academic project for the *Ubiq
 
 ## Implemented features
 * Main activity - calculating the dates of 4 moveable feasts for any (1600-3000) given year.
+* Shopping Sundays activity - calculating the dates of all shopping Sundays in Poland in the year selected in the main activity.
+* Copying dates to clipboard by clicking.

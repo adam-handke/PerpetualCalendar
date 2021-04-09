@@ -2,8 +2,9 @@ package com.ubiquitous.perpetualcalendar
 
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.view.View
 import android.widget.ListView
 import android.widget.NumberPicker
 import android.widget.SimpleAdapter
@@ -54,12 +55,16 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var holidayListView: ListView
     private lateinit var adapter: SimpleAdapter
+    private var chosenYear = Calendar.getInstance().get(Calendar.YEAR)
+    private var easterDate = calculateEaster(chosenYear)
+    private var pattern = DateTimeFormatter.ofPattern("dd-MM-yyyy")
 
     private fun setHolidayDates(mainActivity: MainActivity, holidayListView: ListView, year: Int) {
         //setting names and dates of holidays
         //based on https://www.geeksforgeeks.org/simpleadapter-in-android-with-example/
         val holidayNames = arrayOf("Ash Wednesday", "Easter Sunday", "Corpus Christi", "First Sunday of Advent")
-        val easterDate = calculateEaster(year)
+        easterDate = calculateEaster(year)
+
         val holidayDates = arrayOf(
                 easterDate.minusDays(46),
                 easterDate,
@@ -69,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         for(i in holidayNames.indices){
             val item = HashMap<String,String>()
             item["name"] = holidayNames[i]
-            item["date"] = holidayDates[i].format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+            item["date"] = holidayDates[i].format(pattern)
             holidays.add(item)
         }
 
@@ -84,23 +89,27 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        if(intent.hasExtra("YEAR")){
+            val extras = intent.extras ?: return
+            chosenYear = extras.getInt("YEAR")
+        }
+
         holidayListView = findViewById(R.id.easterDatesList)
 
         val yearPicker: NumberPicker = findViewById(R.id.yearPicker)
-        //val currentYear = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE).substring(0, 4).toInt()
-        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
         yearPicker.minValue = 1600
         yearPicker.maxValue = 3000
-        yearPicker.value = currentYear
+        yearPicker.value = chosenYear
         yearPicker.wrapSelectorWheel = true
-        setHolidayDates(this, holidayListView, currentYear)
+        setHolidayDates(this, holidayListView, chosenYear)
 
         yearPicker.setOnValueChangedListener { picker, oldVal, newVal ->
-
-            setHolidayDates(this, holidayListView, newVal)
+            chosenYear = newVal
+            setHolidayDates(this, holidayListView, chosenYear)
             true
         }
 
+        //copyting to clipboard
         holidayListView.setOnItemClickListener { parent, view, position, id ->
             val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
             val element = adapter.getItem(position) as HashMap<String, String>
@@ -110,6 +119,12 @@ class MainActivity : AppCompatActivity() {
             val toast = Toast.makeText(applicationContext, "Copied to clipboard", Toast.LENGTH_SHORT)
             toast.show()
         }
+    }
 
+    //changing activity to shopping sundays
+    fun shoppingClick(v: View){
+        val shoppingIntent = Intent(this, SecondActivity::class.java)
+        shoppingIntent.putExtra("EASTER", easterDate.format(pattern))
+        startActivity(shoppingIntent)
     }
 }

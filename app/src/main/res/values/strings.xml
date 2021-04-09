@@ -3,4 +3,6 @@
     <string name="choose">Choose a year</string>
     <string name="shopping">Shopping Sundays</string>
     <string name="working">Working days</string>
+    <string name="ret">Return</string>
+    <string name="shoppingTitle">Shopping Sundays in Poland</string>
 </resources>
