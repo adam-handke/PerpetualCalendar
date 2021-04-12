@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Wieczny kalendarz</string>
+    <string name="choose">Święta ruchome w roku:</string>
+    <string name="shopping">Niedziele handlowe</string>
+    <string name="working">Dni robocze</string>
+    <string name="ret">Powrót</string>
+    <string name="shoppingTitle">Niedziele handlowe w Polsce</string>
+    <string name="workingTitle">Dni robocze w Polsce</string>
+    <string name="since">Od</string>
+    <string name="upTill">Do</string>
+    <string name="ashWednesday">Popielec</string>
+    <string name="easterSunday">Niedziela Wielkanocna</string>
+    <string name="corpusChristi">Boże Ciało</string>
+    <string name="advent">Pierwsza niedziela Adwentu</string>
+    <string name="clipboard">Skopiowano do schowka</string>
+    <string name="laterMsg">Wybierz rok 2020 lub późniejszy</string>
+    <string name="notSupported">" nie jest wspierany"</string>
+    <string name="calendarDays">Dni kalendarzowych</string>
+    <string name="workingDays">Dni roboczych</string>
+</resources>

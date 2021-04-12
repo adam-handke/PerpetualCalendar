@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import android.widget.ListView
 import android.widget.NumberPicker
@@ -62,7 +63,7 @@ class MainActivity : AppCompatActivity() {
     private fun setHolidayDates(mainActivity: MainActivity, holidayListView: ListView, year: Int) {
         //setting names and dates of holidays
         //based on https://www.geeksforgeeks.org/simpleadapter-in-android-with-example/
-        val holidayNames = arrayOf("Ash Wednesday", "Easter Sunday", "Corpus Christi", "First Sunday of Advent")
+        val holidayNames = arrayOf(getString(R.string.ashWednesday), getString(R.string.easterSunday), getString(R.string.corpusChristi), getString(R.string.advent))
         easterDate = calculateEaster(year)
 
         val holidayDates = arrayOf(
@@ -116,7 +117,7 @@ class MainActivity : AppCompatActivity() {
             val clip = ClipData.newPlainText(element["name"], element["date"])
             clipboard.setPrimaryClip(clip)
 
-            val toast = Toast.makeText(applicationContext, "Copied to clipboard", Toast.LENGTH_SHORT)
+            val toast = Toast.makeText(applicationContext, getString(R.string.clipboard), Toast.LENGTH_SHORT)
             toast.show()
         }
     }
@@ -126,5 +127,12 @@ class MainActivity : AppCompatActivity() {
         val shoppingIntent = Intent(this, SecondActivity::class.java)
         shoppingIntent.putExtra("EASTER", easterDate.format(pattern))
         startActivity(shoppingIntent)
+    }
+
+    //changing activity to shopping sundays
+    fun workingClick(v: View){
+        val workingIntent = Intent(this, ThirdActivity::class.java)
+        workingIntent.putExtra("EASTER", easterDate.format(pattern))
+        startActivity(workingIntent)
     }
 }

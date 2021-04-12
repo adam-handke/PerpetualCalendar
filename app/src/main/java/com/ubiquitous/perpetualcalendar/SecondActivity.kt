@@ -12,15 +12,14 @@ import android.widget.TextView
 import android.widget.Toast
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.Month
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-fun getShoppingSundays(easter: LocalDate): Array<String>{
+fun getShoppingSundays(easter: LocalDate, laterMsg: String): Array<String>{
 
     if(easter.year < 2020){
-        return arrayOf("Select 2020 or later year ")
+        return arrayOf(laterMsg)
     }
     //last Sunday before Easter
     var sundays: Array<LocalDate> = arrayOf(easter.minusDays(7))
@@ -73,7 +72,7 @@ class SecondActivity : AppCompatActivity() {
         year = easter.year
         val title: String
         if(year < 2020){
-            title = year.toString().plus(" not supported")
+            title = year.toString().plus(getString(R.string.notSupported))
         }
         else{
             title = year.toString()
@@ -85,7 +84,7 @@ class SecondActivity : AppCompatActivity() {
 
         //set the list of dates
         shoppingSundaysListView = findViewById(R.id.shoppingSundaysList)
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, getShoppingSundays(easter))
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, getShoppingSundays(easter, getString(R.string.laterMsg)))
         shoppingSundaysListView.adapter = adapter
 
         //copying to clipboard
