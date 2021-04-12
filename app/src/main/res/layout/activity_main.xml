@@ -17,7 +17,9 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.050000012" />
+        app:layout_constraintVertical_bias="0.050000012"
+        android:descendantFocusability="blocksDescendants" />
+        <!-- android:imeOptions="actionDone" -->
 
     <TextView
         android:id="@+id/textView"
