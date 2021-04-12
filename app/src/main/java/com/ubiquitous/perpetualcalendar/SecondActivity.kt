@@ -71,7 +71,7 @@ class SecondActivity : AppCompatActivity() {
         year = easter.year
         val title: String
         if(year < 2020){
-            title = year.toString().plus(getString(R.string.notSupported))
+            title = year.toString().plus(" ").plus(getString(R.string.notSupported))
         }
         else{
             title = year.toString()

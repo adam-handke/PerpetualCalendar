@@ -15,7 +15,7 @@
     <string name="advent">"First Sunday of Advent"</string>
     <string name="clipboard">Copied to clipboard</string>
     <string name="laterMsg">Select 2020 or later year</string>
-    <string name="notSupported"> not supported</string>
+    <string name="notSupported">is not supported</string>
     <string name="calendarDays">Calendar days</string>
     <string name="workingDays">Working days</string>
     <string name="wrongDifference">Error - the date \"since\" is after \"up till\"</string>
