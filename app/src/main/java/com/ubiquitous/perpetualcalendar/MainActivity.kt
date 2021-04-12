@@ -4,7 +4,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
 import android.os.Bundle
-import android.view.Gravity
 import android.view.View
 import android.widget.ListView
 import android.widget.NumberPicker
@@ -14,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.math.floor
@@ -56,7 +54,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var holidayListView: ListView
     private lateinit var adapter: SimpleAdapter
-    private var chosenYear = Calendar.getInstance().get(Calendar.YEAR)
+    private var chosenYear = LocalDate.now().year
     private var easterDate = calculateEaster(chosenYear)
     private var pattern = DateTimeFormatter.ofPattern("dd-MM-yyyy")
 
@@ -129,10 +127,10 @@ class MainActivity : AppCompatActivity() {
         startActivity(shoppingIntent)
     }
 
-    //changing activity to shopping sundays
+    //changing activity to working days
     fun workingClick(v: View){
         val workingIntent = Intent(this, ThirdActivity::class.java)
-        workingIntent.putExtra("EASTER", easterDate.format(pattern))
+        //workingIntent.putExtra("EASTER", easterDate.format(pattern))
         startActivity(workingIntent)
     }
 }

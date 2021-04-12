@@ -2,6 +2,7 @@
     <string name="app_name">Perpetual Calendar</string>
     <string name="choose">Movable feasts in the year:</string>
     <string name="shopping">Shopping Sundays</string>
+    <string name="shoppingSingular">Shopping Sunday</string>
     <string name="working">Working days</string>
     <string name="ret">Return</string>
     <string name="shoppingTitle">Shopping Sundays in Poland</string>
@@ -17,4 +18,5 @@
     <string name="notSupported"> not supported</string>
     <string name="calendarDays">Calendar days</string>
     <string name="workingDays">Working days</string>
+    <string name="wrongDifference">Error - the date \"since\" is after \"up till\"</string>
 </resources>

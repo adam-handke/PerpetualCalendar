@@ -18,4 +18,6 @@
     <string name="notSupported">" nie jest wspierany"</string>
     <string name="calendarDays">Dni kalendarzowych</string>
     <string name="workingDays">Dni roboczych</string>
+    <string name="wrongDifference">Błąd - data \"od\" jest po dacie \"do\"</string>
+    <string name="shoppingSingular">Niedziela handlowa</string>
 </resources>

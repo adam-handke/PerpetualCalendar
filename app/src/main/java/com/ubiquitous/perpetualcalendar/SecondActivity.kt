@@ -14,7 +14,6 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 fun getShoppingSundays(easter: LocalDate, laterMsg: String): Array<String>{
 
@@ -61,7 +60,7 @@ class SecondActivity : AppCompatActivity() {
 
     private lateinit var shoppingSundaysListView: ListView
     private var pattern = DateTimeFormatter.ofPattern("dd-MM-yyyy")
-    private var year = Calendar.getInstance().get(Calendar.YEAR)
+    private var year = LocalDate.now().year
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,10 +90,10 @@ class SecondActivity : AppCompatActivity() {
         shoppingSundaysListView.setOnItemClickListener { parent, view, position, id ->
             val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
             val element = adapter.getItem(position) as String
-            val clip = ClipData.newPlainText("Shopping Sunday", element)
+            val clip = ClipData.newPlainText(getString(R.string.shoppingSingular), element)
             clipboard.setPrimaryClip(clip)
 
-            val toast = Toast.makeText(applicationContext, "Copied to clipboard", Toast.LENGTH_SHORT)
+            val toast = Toast.makeText(applicationContext, getString(R.string.clipboard), Toast.LENGTH_SHORT)
             toast.show()
         }
     }
