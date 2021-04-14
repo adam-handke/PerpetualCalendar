@@ -10,6 +10,8 @@ Simple Android app for calculating holiday dates, shopping Sundays and working d
 * Working days activity - calculating the number of working days and calendar days between two given dates (1900-2100).
 * Copying values from lists to clipboard by clicking.
 * English and Polish language versions.
+* App icon:
 
+![Icon](https://github.com/adam-handke/PerpetualCalendar/blob/main/app/src/main/ic_launcher-playstore.png?raw=true)
 ___
-<div>Icon made by <a href="https://www.flaticon.com/authors/dinosoftlabs" title="DinosoftLabs">DinosoftLabs</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+Icon made by <a href="https://www.flaticon.com/authors/dinosoftlabs" title="DinosoftLabs">DinosoftLabs</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
