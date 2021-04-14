@@ -71,10 +71,11 @@ class SecondActivity : AppCompatActivity() {
         year = easter.year
         val title: String
         if(year < 2020){
-            title = year.toString().plus(" ").plus(getString(R.string.notSupported))
+            title = getString(R.string.inYear).plus(" ").plus(year.toString())
+                    .plus(" (").plus(getString(R.string.notSupported)).plus(")")
         }
         else{
-            title = year.toString()
+            title = getString(R.string.inYear).plus(" ").plus(year.toString())
         }
 
         //change title text
@@ -83,18 +84,21 @@ class SecondActivity : AppCompatActivity() {
 
         //set the list of dates
         shoppingSundaysListView = findViewById(R.id.shoppingSundaysList)
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, getShoppingSundays(easter, getString(R.string.laterMsg)))
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1,
+                getShoppingSundays(easter, getString(R.string.laterMsg)))
         shoppingSundaysListView.adapter = adapter
 
         //copying to clipboard
         shoppingSundaysListView.setOnItemClickListener { parent, view, position, id ->
-            val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-            val element = adapter.getItem(position) as String
-            val clip = ClipData.newPlainText(getString(R.string.shoppingSingular), element)
-            clipboard.setPrimaryClip(clip)
+            if(year >= 2020) {
+                val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                val element = adapter.getItem(position) as String
+                val clip = ClipData.newPlainText(getString(R.string.shoppingSingular), element)
+                clipboard.setPrimaryClip(clip)
 
-            val toast = Toast.makeText(applicationContext, getString(R.string.clipboard), Toast.LENGTH_SHORT)
-            toast.show()
+                val toast = Toast.makeText(applicationContext, getString(R.string.clipboard), Toast.LENGTH_SHORT)
+                toast.show()
+            }
         }
     }
 

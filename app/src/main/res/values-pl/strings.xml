@@ -15,9 +15,10 @@
     <string name="advent">Pierwsza niedziela Adwentu</string>
     <string name="clipboard">Skopiowano do schowka</string>
     <string name="laterMsg">Wybierz rok 2020 lub późniejszy</string>
-    <string name="notSupported">nie jest wspierany</string>
+    <string name="notSupported">niewspierany</string>
     <string name="calendarDays">Dni kalendarzowych</string>
     <string name="workingDays">Dni roboczych</string>
     <string name="wrongDifference">Błąd - data \"od\" jest po dacie \"do\"</string>
     <string name="shoppingSingular">Niedziela handlowa</string>
+    <string name="inYear">w roku</string>
 </resources>
