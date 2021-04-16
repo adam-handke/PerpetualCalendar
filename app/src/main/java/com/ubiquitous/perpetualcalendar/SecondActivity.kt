@@ -98,7 +98,7 @@ class SecondActivity : AppCompatActivity() {
         shoppingSundaysListView.adapter = adapter
 
         //copying to clipboard
-        shoppingSundaysListView.setOnItemClickListener { parent, view, position, id ->
+        shoppingSundaysListView.setOnItemClickListener { _, _, position, _ ->
             if(year >= 2020) {
                 val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                 val element = adapter.getItem(position) as String

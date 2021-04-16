@@ -6,11 +6,11 @@ Simple Android app for calculating holiday dates, shopping Sundays and working d
 
 ## Implemented features
 * *Main activity* - calculating the dates of 4 movable feasts for any (1600-3000) given year.
-* *Shopping Sundays activity* - calculating the dates of all shopping Sundays in Poland in the year selected in the main activity.
-* *Working days activity* - calculating the number of working days and calendar days between two given dates (1900-2100).
+* *Shopping Sundays activity* - calculating the dates of all shopping Sundays in Poland in the year selected in the main activity - available only for years with the current legal state (2020-3000).
+* *Working days activity* - calculating the number of working days between two given dates (1990-3000). Additionaly calculates the number of calendar days between the dates.
 * Copying values from lists to clipboard by clicking.
 * English and Polish language versions.
-* Parametrized unit tests for date calculating functions.
+* Parametrized unit tests for date-calculating functions.
 * App icon:
 
 ![Icon](https://github.com/adam-handke/PerpetualCalendar/blob/main/app/src/main/ic_launcher-playstore.png?raw=true)

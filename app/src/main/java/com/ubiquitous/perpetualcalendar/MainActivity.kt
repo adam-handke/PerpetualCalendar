@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
     private var easterDate = calculateEaster(chosenYear)
     private var pattern = DateTimeFormatter.ofPattern("dd-MM-yyyy")
 
-    private fun setHolidayDates(mainActivity: MainActivity, holidayListView: ListView, year: Int) {
+    private fun setHolidayDates(holidayListView: ListView, year: Int) {
         //setting names and dates of holidays
         //based on https://www.geeksforgeeks.org/simpleadapter-in-android-with-example/
         val holidayNames = arrayOf(getString(R.string.ashWednesday), getString(R.string.easterSunday), getString(R.string.corpusChristi), getString(R.string.advent))
@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
             holidays.add(item)
         }
 
-        adapter = SimpleAdapter(mainActivity, holidays, android.R.layout.simple_list_item_2,
+        adapter = SimpleAdapter(this, holidays, android.R.layout.simple_list_item_2,
                 arrayOf("name", "date"), intArrayOf(android.R.id.text1, android.R.id.text2))
         holidayListView.adapter = adapter
 
@@ -101,14 +101,14 @@ class MainActivity : AppCompatActivity() {
         yearPicker.maxValue = 3000
         yearPicker.value = chosenYear
         yearPicker.wrapSelectorWheel = true
-        setHolidayDates(this, holidayListView, chosenYear)
+        setHolidayDates(holidayListView, chosenYear)
 
         yearPicker.setOnValueChangedListener { _, _, newVal ->
             chosenYear = newVal
-            setHolidayDates(this, holidayListView, chosenYear)
+            setHolidayDates(holidayListView, chosenYear)
         }
 
-        //copyting to clipboard
+        //copying to clipboard
         holidayListView.setOnItemClickListener { _, _, position, _ ->
             val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
             @Suppress("UNCHECKED_CAST")

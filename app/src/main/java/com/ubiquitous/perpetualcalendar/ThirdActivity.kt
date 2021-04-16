@@ -15,10 +15,8 @@ import java.time.LocalDate
 import java.time.Month
 import java.time.temporal.ChronoUnit
 import java.util.*
-import kotlin.collections.indices
 import kotlin.collections.set
 
-/*
 fun getTimeInMillisFromDatePicker(datePicker: DatePicker): Long{
     val day = datePicker.dayOfMonth
     val month = datePicker.month
@@ -28,7 +26,6 @@ fun getTimeInMillisFromDatePicker(datePicker: DatePicker): Long{
 
     return calendar.timeInMillis
 }
- */
 
 //calculating the number of working days between two dates (INCLUDING these dates)
 //rules according to the 2021 legal state
@@ -47,7 +44,7 @@ fun calculateWorkingDays(since: LocalDate, upTill: LocalDate): Long{
                     || tmpDate.isEqual(easter.plusDays(1)) //Easter Monday
                     || tmpDate.isEqual(easter.plusDays(60)) //Corpus Christi
                     || tmpDate.isEqual(LocalDate.of(tmpDate.year, 1, 1)) //New Year
-                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 1, 6)) //Epiphany
+                    || (tmpDate.isEqual(LocalDate.of(tmpDate.year, 1, 6)) && tmpDate.year >= 2011) //Epiphany
                     || tmpDate.isEqual(LocalDate.of(tmpDate.year, 5, 1)) //workers day
                     || tmpDate.isEqual(LocalDate.of(tmpDate.year, 5, 3)) //3 May constitution day
                     || tmpDate.isEqual(LocalDate.of(tmpDate.year, 8, 15)) //Armed Forces Day
@@ -71,8 +68,7 @@ class ThirdActivity : AppCompatActivity() {
 
     private lateinit var adapter: SimpleAdapter
 
-    private fun setDifference(activity: AppCompatActivity, differenceListView: ListView,
-                              since: LocalDate, upTill: LocalDate) {
+    private fun setDifference(differenceListView: ListView, since: LocalDate, upTill: LocalDate) {
 
         val listNames = arrayOf(getString(R.string.calendarDays), getString(R.string.workingDays))
         val listNumbers: Array<String>
@@ -80,7 +76,7 @@ class ThirdActivity : AppCompatActivity() {
             listNumbers = arrayOf(getString(R.string.wrongDifference), getString(R.string.wrongDifference))
         }
         else {
-            listNumbers = arrayOf((ChronoUnit.DAYS.between(since, upTill)+1).toString(),
+            listNumbers = arrayOf((ChronoUnit.DAYS.between(since, upTill) + 1).toString(),
                     calculateWorkingDays(since, upTill).toString())
         }
 
@@ -92,7 +88,7 @@ class ThirdActivity : AppCompatActivity() {
             listItems.add(item)
         }
 
-        adapter = SimpleAdapter(activity, listItems, android.R.layout.simple_list_item_2,
+        adapter = SimpleAdapter(this, listItems, android.R.layout.simple_list_item_2,
                 arrayOf("name", "number"), intArrayOf(android.R.id.text1, android.R.id.text2))
         differenceListView.adapter = adapter
 
@@ -111,49 +107,58 @@ class ThirdActivity : AppCompatActivity() {
         //setting up date pickers
         val datePickerSince: DatePicker = findViewById(R.id.datePickerSince)
         val datePickerUpTill: DatePicker = findViewById(R.id.datePickerUpTill)
-        /*
+
         val minDate = Calendar.getInstance()
-        minDate.set(1600, 1, 1)
+        //limited to 1990 because of many law changes after the end of PRL
+        minDate.set(1990, 0, 1)
         val maxDate = Calendar.getInstance()
-        minDate.set(3000, 12, 31)
+        maxDate.set(3000, 11, 31)
+        val today = Calendar.getInstance()
 
         datePickerSince.minDate = minDate.timeInMillis
         datePickerSince.maxDate = maxDate.timeInMillis
         //datePickerSince.maxDate = getTimeInMillisFromDatePicker(datePickerUpTill)
-
         datePickerUpTill.minDate = minDate.timeInMillis
         datePickerUpTill.maxDate = maxDate.timeInMillis
         //datePickerUpTill.minDate = getTimeInMillisFromDatePicker(datePickerSince)
-        */
 
-        setDifference(this, differenceListView,
+        setDifference(differenceListView,
                 LocalDate.of(datePickerSince.year, datePickerSince.month+1, datePickerSince.dayOfMonth),
                 LocalDate.of(datePickerUpTill.year, datePickerUpTill.month+1, datePickerUpTill.dayOfMonth))
 
-        datePickerSince.setOnDateChangedListener { _, _, _, _ ->
-            setDifference(this, differenceListView,
-                    LocalDate.of(datePickerSince.year, datePickerSince.month+1, datePickerSince.dayOfMonth),
-                    LocalDate.of(datePickerUpTill.year, datePickerUpTill.month+1, datePickerUpTill.dayOfMonth))
-        }
+        datePickerSince.init(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH),
+            DatePicker.OnDateChangedListener { _, _, _, _ ->
+                setDifference(differenceListView,
+                        LocalDate.of(datePickerSince.year, datePickerSince.month+1, datePickerSince.dayOfMonth),
+                        LocalDate.of(datePickerUpTill.year, datePickerUpTill.month+1, datePickerUpTill.dayOfMonth))
+                //datePickerUpTill.minDate = getTimeInMillisFromDatePicker(datePickerSince)
+            }
+        )
 
-        datePickerUpTill.setOnDateChangedListener { _, _, _, _ ->
-            setDifference(this, differenceListView,
-                    LocalDate.of(datePickerSince.year, datePickerSince.month+1, datePickerSince.dayOfMonth),
-                    LocalDate.of(datePickerUpTill.year, datePickerUpTill.month+1, datePickerUpTill.dayOfMonth))
-        }
+        datePickerUpTill.init(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH),
+            DatePicker.OnDateChangedListener { _, _, _, _ ->
+                setDifference(differenceListView,
+                        LocalDate.of(datePickerSince.year, datePickerSince.month+1, datePickerSince.dayOfMonth),
+                        LocalDate.of(datePickerUpTill.year, datePickerUpTill.month+1, datePickerUpTill.dayOfMonth))
+                //datePickerSince.maxDate = getTimeInMillisFromDatePicker(datePickerUpTill)
+            }
+        )
 
         //copying to clipboard
         differenceListView.setOnItemClickListener { _, _, position, _ ->
-            val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-            @Suppress("UNCHECKED_CAST")
-            val element = adapter.getItem(position) as HashMap<String, String>
-            val clip = ClipData.newPlainText(element["name"], element["number"])
-            clipboard.setPrimaryClip(clip)
+            if(!LocalDate.of(datePickerUpTill.year, datePickerUpTill.month+1, datePickerUpTill.dayOfMonth)
+                            .isBefore(LocalDate.of(datePickerSince.year, datePickerSince.month+1, datePickerSince.dayOfMonth))) {
+                val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 
-            val toast = Toast.makeText(applicationContext, getString(R.string.clipboard), Toast.LENGTH_SHORT)
-            toast.show()
+                @Suppress("UNCHECKED_CAST")
+                val element = adapter.getItem(position) as HashMap<String, String>
+                val clip = ClipData.newPlainText(element["name"], element["number"])
+                clipboard.setPrimaryClip(clip)
+
+                val toast = Toast.makeText(applicationContext, getString(R.string.clipboard), Toast.LENGTH_SHORT)
+                toast.show()
+            }
         }
-
     }
 
     //returning to the main activity
