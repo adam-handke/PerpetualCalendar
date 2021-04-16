@@ -30,6 +30,9 @@ fun getTimeInMillisFromDatePicker(datePicker: DatePicker): Long{
 }
  */
 
+//calculating the number of working days between two dates (INCLUDING these dates)
+//rules according to the 2021 legal state
+//warning - it does not take into account the additional days off for holidays occurring during weekends
 fun calculateWorkingDays(since: LocalDate, upTill: LocalDate): Long{
 
     var count: Long = 0
@@ -41,17 +44,17 @@ fun calculateWorkingDays(since: LocalDate, upTill: LocalDate): Long{
                 easter = calculateEaster(tmpDate.year)
             }
             if(tmpDate.dayOfWeek == DayOfWeek.SATURDAY || tmpDate.dayOfWeek == DayOfWeek.SUNDAY
-                    || tmpDate.isEqual(easter.plusDays(1))
-                    || tmpDate.isEqual(easter.plusDays(60))
-                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 1, 1))
-                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 1, 6))
-                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 5, 1))
-                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 5, 3))
-                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 8, 15))
-                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 11, 1))
-                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 11, 11))
-                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 12, 25))
-                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 12, 26))){
+                    || tmpDate.isEqual(easter.plusDays(1)) //Easter Monday
+                    || tmpDate.isEqual(easter.plusDays(60)) //Corpus Christi
+                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 1, 1)) //New Year
+                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 1, 6)) //Epiphany
+                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 5, 1)) //workers day
+                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 5, 3)) //3 May constitution day
+                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 8, 15)) //Armed Forces Day
+                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 11, 1)) //All Saints Day
+                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 11, 11)) //Independence Day
+                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 12, 25)) //Christmas (1st day)
+                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 12, 26))){ //Christmas (2nd day)
                 //count += 0
             }
             else{
@@ -99,6 +102,9 @@ class ThirdActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_third)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.setLogo(R.mipmap.ic_launcher)
+        supportActionBar?.setDisplayUseLogoEnabled(true)
 
         val differenceListView: ListView = findViewById(R.id.differenceList)
 
@@ -124,21 +130,22 @@ class ThirdActivity : AppCompatActivity() {
                 LocalDate.of(datePickerSince.year, datePickerSince.month+1, datePickerSince.dayOfMonth),
                 LocalDate.of(datePickerUpTill.year, datePickerUpTill.month+1, datePickerUpTill.dayOfMonth))
 
-        datePickerSince.setOnDateChangedListener { view, year, monthOfYear, dayOfMonth ->
+        datePickerSince.setOnDateChangedListener { _, _, _, _ ->
             setDifference(this, differenceListView,
                     LocalDate.of(datePickerSince.year, datePickerSince.month+1, datePickerSince.dayOfMonth),
                     LocalDate.of(datePickerUpTill.year, datePickerUpTill.month+1, datePickerUpTill.dayOfMonth))
         }
 
-        datePickerUpTill.setOnDateChangedListener { view, year, monthOfYear, dayOfMonth ->
+        datePickerUpTill.setOnDateChangedListener { _, _, _, _ ->
             setDifference(this, differenceListView,
                     LocalDate.of(datePickerSince.year, datePickerSince.month+1, datePickerSince.dayOfMonth),
                     LocalDate.of(datePickerUpTill.year, datePickerUpTill.month+1, datePickerUpTill.dayOfMonth))
         }
 
         //copying to clipboard
-        differenceListView.setOnItemClickListener { parent, view, position, id ->
+        differenceListView.setOnItemClickListener { _, _, position, _ ->
             val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+            @Suppress("UNCHECKED_CAST")
             val element = adapter.getItem(position) as HashMap<String, String>
             val clip = ClipData.newPlainText(element["name"], element["number"])
             clipboard.setPrimaryClip(clip)

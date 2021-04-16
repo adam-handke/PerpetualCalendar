@@ -15,13 +15,15 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 
-fun getShoppingSundays(easter: LocalDate, laterMsg: String): Array<String>{
+//calculating shopping sundays based on the easter date received from the MainActivity
+fun calculateShoppingSundays(easter: LocalDate): MutableList<LocalDate>{
 
-    if(easter.year < 2020){
-        return arrayOf(laterMsg)
-    }
+    //wrong date checker
+    if(easter.year < 2020)
+        return mutableListOf(LocalDate.of(1970,1,1))
+
     //last Sunday before Easter
-    var sundays: Array<LocalDate> = arrayOf(easter.minusDays(7))
+    val sundays: MutableList<LocalDate> = mutableListOf(easter.minusDays(7))
 
     //last Sunday of january, april, june and august
     val months = arrayOf(1, 4, 6, 8)
@@ -31,7 +33,7 @@ fun getShoppingSundays(easter: LocalDate, laterMsg: String): Array<String>{
         while(tmpDate.dayOfWeek != DayOfWeek.SUNDAY){
             tmpDate = tmpDate.minusDays(1)
         }
-        sundays = sundays.plus(tmpDate)
+        sundays.add(tmpDate)
     }
 
     //2 Sundays before Christmas
@@ -40,20 +42,14 @@ fun getShoppingSundays(easter: LocalDate, laterMsg: String): Array<String>{
     while (countSundays < 2){
         tmpDate = tmpDate.minusDays(1)
         if (tmpDate.dayOfWeek == DayOfWeek.SUNDAY){
-            sundays = sundays.plus(tmpDate)
+            sundays.add(tmpDate)
             countSundays++
         }
     }
 
     //sort Sundays
     sundays.sort()
-    val pattern = DateTimeFormatter.ofPattern("dd-MM-yyyy")
-    var sundayStrings : Array<String> = emptyArray()
-    for(s in sundays){
-        sundayStrings = sundayStrings.plus(s.format(pattern))
-    }
-
-    return sundayStrings
+    return sundays
 }
 
 class SecondActivity : AppCompatActivity() {
@@ -65,17 +61,30 @@ class SecondActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.setLogo(R.mipmap.ic_launcher)
+        supportActionBar?.setDisplayUseLogoEnabled(true)
 
         val extras = intent.extras ?: return
         val easter = LocalDate.parse(extras.getString("EASTER"), pattern)
         year = easter.year
+
+        //set title and calculate dates
         val title: String
+        var sundayStrings : MutableList<String> = mutableListOf()
         if(year < 2020){
             title = getString(R.string.inYear).plus(" ").plus(year.toString())
                     .plus(" (").plus(getString(R.string.notSupported)).plus(")")
+
+            sundayStrings = mutableListOf(getString(R.string.laterMsg))
         }
         else{
             title = getString(R.string.inYear).plus(" ").plus(year.toString())
+
+            val sundays = calculateShoppingSundays(easter)
+            for(s in sundays){
+                sundayStrings.add(s.format(pattern))
+            }
         }
 
         //change title text
@@ -84,8 +93,8 @@ class SecondActivity : AppCompatActivity() {
 
         //set the list of dates
         shoppingSundaysListView = findViewById(R.id.shoppingSundaysList)
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1,
-                getShoppingSundays(easter, getString(R.string.laterMsg)))
+
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, sundayStrings)
         shoppingSundaysListView.adapter = adapter
 
         //copying to clipboard

@@ -5,18 +5,14 @@ import android.content.ClipboardManager
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.ListView
-import android.widget.NumberPicker
-import android.widget.SimpleAdapter
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 import kotlin.math.floor
+
 
 fun calculateEaster(year: Int): LocalDate {
     // Meeus/Jones/Butcher algorithm
@@ -70,9 +66,9 @@ class MainActivity : AppCompatActivity() {
                 easterDate,
                 easterDate.plusDays(60),
                 calculateAdvent(year))
-        val holidays = ArrayList<HashMap<String,String>>()
+        val holidays = ArrayList<HashMap<String, String>>()
         for(i in holidayNames.indices){
-            val item = HashMap<String,String>()
+            val item = HashMap<String, String>()
             item["name"] = holidayNames[i]
             item["date"] = holidayDates[i].format(pattern)
             holidays.add(item)
@@ -89,6 +85,9 @@ class MainActivity : AppCompatActivity() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.setLogo(R.mipmap.ic_launcher)
+        supportActionBar?.setDisplayUseLogoEnabled(true)
 
         if(intent.hasExtra("YEAR")){
             val extras = intent.extras ?: return
@@ -104,15 +103,15 @@ class MainActivity : AppCompatActivity() {
         yearPicker.wrapSelectorWheel = true
         setHolidayDates(this, holidayListView, chosenYear)
 
-        yearPicker.setOnValueChangedListener { picker, oldVal, newVal ->
+        yearPicker.setOnValueChangedListener { _, _, newVal ->
             chosenYear = newVal
             setHolidayDates(this, holidayListView, chosenYear)
-            true
         }
 
         //copyting to clipboard
-        holidayListView.setOnItemClickListener { parent, view, position, id ->
+        holidayListView.setOnItemClickListener { _, _, position, _ ->
             val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+            @Suppress("UNCHECKED_CAST")
             val element = adapter.getItem(position) as HashMap<String, String>
             val clip = ClipData.newPlainText(element["name"], element["date"])
             clipboard.setPrimaryClip(clip)
