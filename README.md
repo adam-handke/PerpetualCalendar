@@ -11,8 +11,8 @@ Simple Android app for calculating holiday dates, shopping Sundays and working d
 * Copying values from lists to clipboard by clicking.
 * English and Polish language versions.
 * Parametrized unit tests for date-calculating functions.
-* App icon:
+* Screenshots:
 
-![Icon](https://github.com/adam-handke/PerpetualCalendar/blob/main/app/src/main/ic_launcher-playstore.png?raw=true)
+![Screenshots](https://github.com/adam-handke/PerpetualCalendar/blob/main/screenshots.png?raw=true)
 ___
 Icon made by <a href="https://www.flaticon.com/authors/dinosoftlabs" title="DinosoftLabs">DinosoftLabs</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
