@@ -12,11 +12,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.Month
 import java.time.temporal.ChronoUnit
 import java.util.*
 import kotlin.collections.set
 
+/*
 fun getTimeInMillisFromDatePicker(datePicker: DatePicker): Long{
     val day = datePicker.dayOfMonth
     val month = datePicker.month
@@ -26,40 +26,74 @@ fun getTimeInMillisFromDatePicker(datePicker: DatePicker): Long{
 
     return calendar.timeInMillis
 }
+*/
+
+//precalculating free days for faster calculateWorkingDays()
+//rules according to the 2021 legal state (2011 law change is taken into account)
+fun precalculateFreeDays(sinceYear: Int, upTillYear: Int): Map<Int, Set<LocalDate>>{
+
+    val freeDaysPerYear: MutableMap<Int, Set<LocalDate>> = mutableMapOf()
+    for(year in sinceYear..upTillYear) {
+        val freeDays = mutableSetOf<LocalDate>()
+
+        //first saturday
+        var saturday = LocalDate.of(year, 1, 1)
+        while (saturday.dayOfWeek != DayOfWeek.SATURDAY){
+            saturday = saturday.plusDays(1)
+        }
+        //adding saturdays
+        while (saturday.year == year){
+            freeDays.add(saturday)
+            saturday = saturday.plusDays(7)
+        }
+
+        //first sunday
+        var sunday = LocalDate.of(year, 1, 1)
+        while (sunday.dayOfWeek != DayOfWeek.SUNDAY){
+            sunday = sunday.plusDays(1)
+        }
+        //adding sundays
+        while (sunday.year == year){
+            freeDays.add(sunday)
+            sunday = sunday.plusDays(7)
+        }
+
+        //adding holidays
+        val easter = calculateEaster(year)
+        freeDays.add(easter.plusDays(1)) //Easter Monday
+        freeDays.add(easter.plusDays(60)) //Corpus Christi
+        freeDays.add(LocalDate.of(year, 1, 1)) //New Year
+        if(year >= 2011) {
+            freeDays.add(LocalDate.of(year, 1, 6)) //Epiphany
+        }
+        freeDays.add(LocalDate.of(year, 5, 1)) //workers day
+        freeDays.add(LocalDate.of(year, 5, 3)) //3 May constitution day
+        freeDays.add(LocalDate.of(year, 8, 15)) //Armed Forces Day
+        freeDays.add(LocalDate.of(year, 11, 1)) //All Saints Day
+        freeDays.add(LocalDate.of(year, 11, 11)) //Independence Day
+        freeDays.add(LocalDate.of(year, 12, 25)) //Christmas (1st day)
+        freeDays.add(LocalDate.of(year, 12, 26)) //Christmas (2nd day)
+        freeDaysPerYear[year] = freeDays
+    }
+    return freeDaysPerYear
+}
 
 //calculating the number of working days between two dates (INCLUDING these dates)
-//BRUTE FORCE method, not optimal
-//rules according to the 2021 legal state
 //warning - it does not take into account the additional days off for holidays occurring during weekends
-fun calculateWorkingDays(since: LocalDate, upTill: LocalDate): Long{
+fun calculateWorkingDays(since: LocalDate, upTill: LocalDate, precalculatedFreeDays:  Map<Int, Set<LocalDate>>): Long{
 
-    var count: Long = 0
+    var count: Long = ChronoUnit.DAYS.between(since, upTill) + 1
     if(!upTill.isBefore(since)){
-        var tmpDate = since
-        var easter = calculateEaster(tmpDate.year)
-        while(tmpDate <= upTill){
-            if(tmpDate.month == Month.JANUARY && tmpDate.dayOfMonth == 1){
-                easter = calculateEaster(tmpDate.year)
+        for(year in since.year..upTill.year){
+            for(day in precalculatedFreeDays[year]!!){
+                if(!since.isAfter(day) && !upTill.isBefore(day)){
+                    count--
+                }
             }
-            if(tmpDate.dayOfWeek == DayOfWeek.SATURDAY || tmpDate.dayOfWeek == DayOfWeek.SUNDAY
-                    || tmpDate.isEqual(easter.plusDays(1)) //Easter Monday
-                    || tmpDate.isEqual(easter.plusDays(60)) //Corpus Christi
-                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 1, 1)) //New Year
-                    || (tmpDate.isEqual(LocalDate.of(tmpDate.year, 1, 6)) && tmpDate.year >= 2011) //Epiphany
-                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 5, 1)) //workers day
-                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 5, 3)) //3 May constitution day
-                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 8, 15)) //Armed Forces Day
-                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 11, 1)) //All Saints Day
-                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 11, 11)) //Independence Day
-                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 12, 25)) //Christmas (1st day)
-                    || tmpDate.isEqual(LocalDate.of(tmpDate.year, 12, 26))){ //Christmas (2nd day)
-                //count += 0
-            }
-            else{
-                count++
-            }
-            tmpDate = tmpDate.plusDays(1)
         }
+    }
+    else{
+        return -1
     }
 
     return count
@@ -68,6 +102,9 @@ fun calculateWorkingDays(since: LocalDate, upTill: LocalDate): Long{
 class ThirdActivity : AppCompatActivity() {
 
     private lateinit var adapter: SimpleAdapter
+    private val minYear = 1990 //limited to 1990 because of many law changes during the PRL era
+    private val maxYear = 3000
+    private val precalculatedFreeDays = precalculateFreeDays(minYear, maxYear)
 
     private fun setDifference(differenceListView: ListView, since: LocalDate, upTill: LocalDate) {
 
@@ -78,7 +115,7 @@ class ThirdActivity : AppCompatActivity() {
         }
         else {
             listNumbers = arrayOf((ChronoUnit.DAYS.between(since, upTill) + 1).toString(),
-                    calculateWorkingDays(since, upTill).toString())
+                    calculateWorkingDays(since, upTill, precalculatedFreeDays).toString())
         }
 
         val listItems = ArrayList<HashMap<String, String>>()
@@ -110,10 +147,9 @@ class ThirdActivity : AppCompatActivity() {
         val datePickerUpTill: DatePicker = findViewById(R.id.datePickerUpTill)
 
         val minDate = Calendar.getInstance()
-        //limited to 1990 because of many law changes after the end of PRL
-        minDate.set(1990, 0, 1)
+        minDate.set(minYear, 0, 1)
         val maxDate = Calendar.getInstance()
-        maxDate.set(2200, 11, 31)
+        maxDate.set(maxYear, 11, 31)
         val today = Calendar.getInstance()
 
         datePickerSince.minDate = minDate.timeInMillis
