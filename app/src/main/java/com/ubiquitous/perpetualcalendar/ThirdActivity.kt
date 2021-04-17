@@ -28,6 +28,7 @@ fun getTimeInMillisFromDatePicker(datePicker: DatePicker): Long{
 }
 
 //calculating the number of working days between two dates (INCLUDING these dates)
+//BRUTE FORCE method, not optimal
 //rules according to the 2021 legal state
 //warning - it does not take into account the additional days off for holidays occurring during weekends
 fun calculateWorkingDays(since: LocalDate, upTill: LocalDate): Long{
@@ -112,7 +113,7 @@ class ThirdActivity : AppCompatActivity() {
         //limited to 1990 because of many law changes after the end of PRL
         minDate.set(1990, 0, 1)
         val maxDate = Calendar.getInstance()
-        maxDate.set(3000, 11, 31)
+        maxDate.set(2200, 11, 31)
         val today = Calendar.getInstance()
 
         datePickerSince.minDate = minDate.timeInMillis
