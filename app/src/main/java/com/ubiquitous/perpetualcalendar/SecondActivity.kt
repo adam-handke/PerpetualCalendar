@@ -47,7 +47,7 @@ fun calculateShoppingSundays(easter: LocalDate): MutableList<LocalDate>{
         }
     }
 
-    //sort Sundays
+    //sort shopping Sundays chronologically
     sundays.sort()
     return sundays
 }

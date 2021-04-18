@@ -36,15 +36,13 @@ fun calculateEaster(year: Int): LocalDate {
 }
 
 fun calculateAdvent(year: Int): LocalDate {
-    var tmpDate = LocalDate.of(year, 12, 25)
-    var countSundays = 0
-    while (countSundays < 4){
+    var tmpDate = LocalDate.of(year, 12, 24)
+    //finding the 4th Sunday of Advent (last Sunday before December 25th)
+    while (tmpDate.dayOfWeek != DayOfWeek.SUNDAY){
         tmpDate = tmpDate.minusDays(1)
-        if (tmpDate.dayOfWeek == DayOfWeek.SUNDAY){
-            countSundays++
-        }
     }
-    return tmpDate
+    //returning the Sunday 3 weeks before
+    return tmpDate.minusDays(21)
 }
 
 class MainActivity : AppCompatActivity() {
