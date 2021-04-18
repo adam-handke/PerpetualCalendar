@@ -8,7 +8,7 @@ import java.time.LocalDate
 
 //parametrized tests based on https://www.rossharper.net/2016/02/parameterized-junit4-unit-tests-in-kotlin/
 @RunWith(Parameterized::class)
-class CalculateShoppingSundaysTest(private val param1: MutableList<LocalDate>, private val param2: LocalDate) {
+class CalculateShoppingSundaysTest(private val shoppingSundays: MutableList<LocalDate>, private val easter: LocalDate) {
 
     companion object {
         @JvmStatic
@@ -62,6 +62,6 @@ class CalculateShoppingSundaysTest(private val param1: MutableList<LocalDate>, p
 
     @Test
     fun calculateShoppingSundaysTest() {
-        assertEquals(param1, calculateShoppingSundays(param2))
+        assertEquals(shoppingSundays, calculateShoppingSundays(easter))
     }
 }
