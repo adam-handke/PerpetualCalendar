@@ -12,7 +12,8 @@ Simple Android app for calculating holiday dates, shopping Sundays and working d
 * Copying values from lists to clipboard by clicking.
 * English and Polish language versions (depending on the system language).
 * Parametrized unit tests for date-calculating functions.
-* Screenshots:
+
+## Screenshots:
 
 ![Screenshots](https://github.com/adam-handke/PerpetualCalendar/blob/main/screenshots.png?raw=true)
 ___
